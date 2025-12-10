@@ -1,4 +1,3 @@
-// ============== COMPANY & USERS ==============
 
 export interface Company {
   id: string;
