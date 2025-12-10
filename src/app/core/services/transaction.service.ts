@@ -21,7 +21,6 @@ export class TransactionService implements OnDestroy {
     private walletService: WalletService
   ) {
     this.loadTransactions();
-    // S'abonner aux changements de compagnie pour recharger les transactions
     this.authService.currentCompany$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -40,9 +39,7 @@ export class TransactionService implements OnDestroy {
     }
   }
 
-  // Récupère toutes les transactions de l'entreprise (appel direct)
   getAll(): Observable<Transaction[]> {
-    // Forcer le rechargement si les données sont vides et qu'on a une compagnie
     const currentValue = this.transactionsSubject.getValue();
     if (currentValue.length === 0 && this.authService.getCurrentCompanyId()) {
       this.loadTransactions();
@@ -50,7 +47,6 @@ export class TransactionService implements OnDestroy {
     return this.transactions$;
   }
 
-  // Récupère les transactions d'un portefeuille
   getByWallet(walletId: string): Observable<Transaction[]> {
     return this.transactions$.pipe(
       map(transactions => transactions.filter(tx => tx.walletId === walletId))
@@ -63,7 +59,6 @@ export class TransactionService implements OnDestroy {
     );
   }
 
-  // Crée une nouvelle transaction
   create(transaction: Omit<Transaction, 'id' | 'companyId' | 'createdBy'>): Observable<Transaction> {
     const companyId = this.authService.getCurrentCompanyId();
     const user = this.authService.getCurrentUser();
@@ -79,7 +74,6 @@ export class TransactionService implements OnDestroy {
     return this.http.post<Transaction>(`${this.apiUrl}/transactions`, newTx)
       .pipe(
         switchMap(tx => {
-          // Mettre à jour le solde du portefeuille
           const amount = tx.type === 'income' || tx.type === 'invoice' ? tx.amount : -tx.amount;
           return this.walletService.updateBalance(tx.walletId, amount).pipe(
             map(() => tx)
@@ -88,7 +82,6 @@ export class TransactionService implements OnDestroy {
       );
   }
 
-  // Modifie une transaction
   update(id: string, updates: Partial<Transaction>): Observable<Transaction> {
     return this.http.patch<Transaction>(
       `${this.apiUrl}/transactions/${id}`,
@@ -96,7 +89,6 @@ export class TransactionService implements OnDestroy {
     );
   }
 
-  // Approuve une transaction
   approve(id: string, approverId: string): Observable<Transaction> {
     return this.update(id, { 
       approvedBy: approverId,
@@ -104,14 +96,12 @@ export class TransactionService implements OnDestroy {
     });
   }
 
-  // Rejette une transaction
   reject(id: string): Observable<Transaction> {
     return this.update(id, { 
       status: 'rejected'
     });
   }
 
-  // Marque une transaction comme payée
   markAsPaid(id: string): Observable<Transaction> {
     return this.update(id, { 
       status: 'paid',
@@ -119,14 +109,12 @@ export class TransactionService implements OnDestroy {
     });
   }
 
-  // Supprime une transaction
   delete(id: string): Observable<void> {
     return this.http.delete<void>(
       `${this.apiUrl}/transactions/${id}`
     );
   }
 
-  // Recherche par description/facture
   search(query: string): Observable<Transaction[]> {
     return this.transactions$.pipe(
       map(transactions => 
@@ -138,28 +126,24 @@ export class TransactionService implements OnDestroy {
     );
   }
 
-  // Filtre par type (invoice/expense/transfer/income)
   filterByType(type: TransactionType): Observable<Transaction[]> {
     return this.transactions$.pipe(
       map(transactions => transactions.filter(tx => tx.type === type))
     );
   }
 
-  // Filtre par statut
   filterByStatus(status: TransactionStatus): Observable<Transaction[]> {
     return this.transactions$.pipe(
       map(transactions => transactions.filter(tx => tx.status === status))
     );
   }
 
-  // Filtre par catégorie
   filterByCategory(category: string): Observable<Transaction[]> {
     return this.transactions$.pipe(
       map(transactions => transactions.filter(tx => tx.category === category))
     );
   }
 
-  // Filtre par date
   filterByDateRange(startDate: string, endDate: string): Observable<Transaction[]> {
     return this.transactions$.pipe(
       map(transactions => 
@@ -168,7 +152,6 @@ export class TransactionService implements OnDestroy {
     );
   }
 
-  // Récupère les transactions en attente d'approbation
   getPendingApprovals(): Observable<Transaction[]> {
     return this.transactions$.pipe(
       map(transactions => 
@@ -177,7 +160,6 @@ export class TransactionService implements OnDestroy {
     );
   }
 
-  // Récupère les factures non payées
   getOverdueInvoices(): Observable<Transaction[]> {
     const today = new Date().toISOString().split('T')[0];
     return this.transactions$.pipe(
@@ -192,7 +174,6 @@ export class TransactionService implements OnDestroy {
     );
   }
 
-  // Récupère les transactions d'un client
   getByClient(clientId: string): Observable<Transaction[]> {
     return this.transactions$.pipe(
       map(transactions => 
@@ -201,7 +182,6 @@ export class TransactionService implements OnDestroy {
     );
   }
 
-  // Récupère les transactions d'un fournisseur
   getBySupplier(supplierId: string): Observable<Transaction[]> {
     return this.transactions$.pipe(
       map(transactions => 
@@ -210,7 +190,6 @@ export class TransactionService implements OnDestroy {
     );
   }
 
-  // Calcule le total des revenus pour une période
   getTotalIncome(startDate: string, endDate: string): Observable<number> {
     return this.filterByDateRange(startDate, endDate).pipe(
       map(transactions => 
@@ -221,7 +200,6 @@ export class TransactionService implements OnDestroy {
     );
   }
 
-  // Calcule le total des dépenses pour une période
   getTotalExpenses(startDate: string, endDate: string): Observable<number> {
     return this.filterByDateRange(startDate, endDate).pipe(
       map(transactions => 

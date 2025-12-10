@@ -15,7 +15,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dashboardData: DashboardData | null = null;
   loading = true;
 
-  // Chart configurations
   monthlyExpensesChart!: ChartConfiguration;
   expensesByCategoryChart!: ChartConfiguration;
   monthlyIncomeChart!: ChartConfiguration;
@@ -53,20 +52,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   initializeCharts(): void {
     if (!this.dashboardData) return;
 
-    // Monthly Expenses Chart
     this.monthlyExpensesChart = {
-      type: 'line',
+      type: 'bar',
       data: {
         labels: this.dashboardData.monthlyExpenses.map(m => m.month),
         datasets: [
           {
             label: 'Dépenses mensuelles',
             data: this.dashboardData.monthlyExpenses.map(m => m.amount),
-            borderColor: '#dc3545',
-            backgroundColor: 'rgba(220, 53, 69, 0.1)',
-            borderWidth: 2,
-            fill: true,
-            tension: 0.4
+            backgroundColor: '#dc3545',
+            borderColor: '#c82333',
+            borderWidth: 1
           }
         ]
       },
@@ -86,7 +82,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     };
 
-    // Expenses by Category Chart
     this.expensesByCategoryChart = {
       type: 'doughnut',
       data: {
@@ -119,7 +114,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     };
 
-    // Monthly Income Chart
     this.monthlyIncomeChart = {
       type: 'bar',
       data: {

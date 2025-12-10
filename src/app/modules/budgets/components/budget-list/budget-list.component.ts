@@ -58,13 +58,10 @@ export class BudgetListComponent implements OnInit, OnDestroy {
   }
 
   loadBudgetMetrics(): void {
-    // Calculer les métriques localement sans appels API supplémentaires
     this.budgets.forEach(budget => {
-      // Calcul du pourcentage d'utilisation
       const percentage = budget.spent && budget.limit ? (budget.spent / budget.limit) * 100 : 0;
       this.budgetUtilization[budget.id] = Math.round(percentage);
       
-      // Vérifier si le budget est dépassé
       this.budgetExceeded[budget.id] = budget.spent > budget.limit;
     });
   }
@@ -97,12 +94,10 @@ export class BudgetListComponent implements OnInit, OnDestroy {
   }
 
   getUtilizationPercentage(id: string): number {
-    // Récupérer depuis le cache local (calculé déjà)
     return this.budgetUtilization[id] || 0;
   }
 
   getIsExceeded(id: string): boolean {
-    // Récupérer depuis le cache local
     return this.budgetExceeded[id] || false;
   }
 

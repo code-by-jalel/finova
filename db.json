@@ -720,11 +720,12 @@
       "date": "2025-12-10",
       "walletId": "wallet_1",
       "currency": "EUR",
-      "status": "pending",
+      "status": "confirmed",
       "subcategory": "other",
       "tags": [],
       "companyId": "comp_2",
-      "createdBy": "4"
+      "createdBy": "4",
+      "approvedBy": "4"
     }
   ],
   "budgets": [

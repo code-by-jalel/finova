@@ -21,7 +21,6 @@ export class AuthService {
   private companyKey = 'finova_company';
 
   constructor(private http: HttpClient) {
-    // Restaurer le user depuis localStorage au démarrage
     const storedUser = this.getUserFromStorage();
     const storedCompany = this.getCompanyFromStorage();
     if (storedUser) {
@@ -41,7 +40,6 @@ export class AuthService {
             throw new Error('Email ou mot de passe incorrect');
           }
           
-          // Vérifier le statut de l'utilisateur
           if (user.status === 'pending') {
             throw new Error('Votre compte est en attente d\'approbation par un administrateur');
           }
@@ -169,11 +167,9 @@ export class AuthService {
           return this.http.post<User>(`${this.apiUrl}/users`, newUser);
         }),
         tap(user => {
-          // Ne pas connecter automatiquement - l'utilisateur doit attendre l'approbation
-          // Simplement retourner l'utilisateur créé
         }),
         map(user => ({
-          token: '',  // ← Pas de token jusqu'à l'approbation
+          token: '', 
           user
         })),
         catchError(error => {

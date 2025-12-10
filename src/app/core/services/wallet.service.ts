@@ -16,7 +16,6 @@ export class WalletService implements OnDestroy {
 
   constructor(private http: HttpClient, private authService: AuthService) {
     this.loadWallets();
-    // S'abonner aux changements de compagnie pour recharger les portefeuilles
     this.authService.currentCompany$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -36,7 +35,6 @@ export class WalletService implements OnDestroy {
   }
 
   getAll(): Observable<Wallet[]> {
-    // Forcer le rechargement si les données sont vides et qu'on a une compagnie
     const currentValue = this.walletsSubject.getValue();
     if (currentValue.length === 0 && this.authService.getCurrentCompanyId()) {
       this.loadWallets();

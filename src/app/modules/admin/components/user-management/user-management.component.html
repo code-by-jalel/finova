@@ -4,12 +4,10 @@
     <p>Approuver les nouveaux comptes et gérer les rôles</p>
   </div>
 
-  <!-- Message d'alerte -->
   <div *ngIf="message" [class]="'alert alert-' + messageType">
     {{ message }}
   </div>
 
-  <!-- Tabs -->
   <div class="tabs">
     <button 
       class="tab-button"
@@ -27,12 +25,10 @@
     </button>
   </div>
 
-  <!-- Loading -->
   <div *ngIf="loading" class="loading">
     <span>Chargement...</span>
   </div>
 
-  <!-- Tab: En attente d'approbation -->
   <div *ngIf="selectedTab === 'pending' && !loading" class="tab-content">
     <div *ngIf="pendingUsers.length === 0" class="empty-state">
       <p>Aucun utilisateur en attente d'approbation</p>
@@ -74,7 +70,6 @@
     </div>
   </div>
 
-  <!-- Tab: Utilisateurs Actifs -->
   <div *ngIf="selectedTab === 'active' && !loading" class="tab-content">
     <div *ngIf="activeUsers.length === 0" class="empty-state">
       <p>Aucun utilisateur actif</p>

@@ -38,7 +38,6 @@ export class AlertsDashboardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.alerts = data.alerts || [];
-          // Sort by date descending
           this.alerts.sort((a, b) => {
             const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
             const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
@@ -72,8 +71,6 @@ export class AlertsDashboardComponent implements OnInit, OnDestroy {
     if (alert.read) return;
     
     this.readingId = alert.id;
-    // TODO: Call service to mark as read
-    // For now, just update locally
     alert.read = true;
     this.readingId = null;
   }

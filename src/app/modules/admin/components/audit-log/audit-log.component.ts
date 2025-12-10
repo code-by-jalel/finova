@@ -47,16 +47,12 @@ export class AuditLogComponent implements OnInit, OnDestroy {
 
   loadAuditLogs(): void {
     this.loading = true;
-    // In a real app, you'd fetch from an audit service
-    // For now, we'll load from dashboard service if available
-    // TODO: Create dedicated AuditService
     this.loading = false;
   }
 
   applyFilters(): void {
     let filtered = this.auditLogs;
 
-    // Filter by search query
     if (this.searchQuery) {
       filtered = filtered.filter(log =>
         log.action.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -65,7 +61,6 @@ export class AuditLogComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Filter by action
     if (this.filterAction !== 'all') {
       filtered = filtered.filter(log => log.action === this.filterAction);
     }

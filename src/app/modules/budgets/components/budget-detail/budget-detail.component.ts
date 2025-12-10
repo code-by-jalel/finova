@@ -68,7 +68,6 @@ export class BudgetDetailComponent implements OnInit, OnDestroy {
   loadBudgetMetrics(): void {
     if (!this.budget) return;
 
-    // Calcul local sans appel API
     const percentage = this.budget.spent && this.budget.limit 
       ? Math.round((this.budget.spent / this.budget.limit) * 100) 
       : 0;

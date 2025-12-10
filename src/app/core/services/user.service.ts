@@ -14,7 +14,6 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  // Récupérer tous les utilisateurs d'une entreprise
   getUsersByCompany(companyId: string): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/users?companyId=${companyId}`)
       .pipe(
@@ -22,7 +21,6 @@ export class UserService {
       );
   }
 
-  // Récupérer tous les utilisateurs
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/users`)
       .pipe(
@@ -30,12 +28,10 @@ export class UserService {
       );
   }
 
-  // Récupérer un utilisateur par ID
   getUserById(id: string): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/users/${id}`);
   }
 
-  // Approuver un utilisateur (changer status de pending à active)
   approveUser(userId: string, role: string, permissions: string[]): Observable<User> {
     return this.http.patch<User>(`${this.apiUrl}/users/${userId}`, {
       status: 'active',
@@ -50,7 +46,6 @@ export class UserService {
     );
   }
 
-  // Rejeter un utilisateur (supprimer)
   rejectUser(userId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/users/${userId}`)
       .pipe(
@@ -62,7 +57,6 @@ export class UserService {
       );
   }
 
-  // Modifier les permissions d'un utilisateur
   updateUserRole(userId: string, role: string, permissions: string[]): Observable<User> {
     return this.http.patch<User>(`${this.apiUrl}/users/${userId}`, {
       role,
@@ -76,7 +70,6 @@ export class UserService {
     );
   }
 
-  // Récupérer les permissions par défaut selon le rôle
   getDefaultPermissions(role: string): string[] {
     const permissions: { [key: string]: string[] } = {
       'admin': ['full_access'],
@@ -89,7 +82,6 @@ export class UserService {
     return permissions[role] || [];
   }
 
-  // Filtrer les utilisateurs par statut
   getFilteredUsers(companyId: string, status: string): Observable<User[]> {
     return this.getUsersByCompany(companyId).pipe(
       map(users => users.filter(u => u.status === status))

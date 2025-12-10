@@ -3,6 +3,7 @@ import { Observable, combineLatest, map } from 'rxjs';
 import { DashboardData, Alert } from '../models';
 import { TransactionService } from './transaction.service';
 import { BudgetService } from './budget.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,31 +11,38 @@ import { BudgetService } from './budget.service';
 export class DashboardService {
   constructor(
     private transactionService: TransactionService,
-    private budgetService: BudgetService
+    private budgetService: BudgetService,
+    private authService: AuthService
   ) {}
 
   getDashboardData(): Observable<DashboardData> {
+    const currentCompanyId = this.authService.getCurrentCompanyId();
+    
     return combineLatest([
       this.transactionService.getAll(),
       this.budgetService.getAll()
     ]).pipe(
       map(([transactions, budgets]) => {
-        const totalIncome = transactions
-          .filter(t => t.type === 'income')
+        // Filter transactions by current company
+        const companyTransactions = transactions.filter(t => t.companyId === currentCompanyId);
+        
+        const totalIncome = companyTransactions
+          .filter(t => t.type === 'income' || (t.type === 'invoice' && t.status === 'paid'))
           .reduce((sum, t) => sum + t.amount, 0);
 
-        const totalExpenses = transactions
+        const totalExpenses = companyTransactions
           .filter(t => t.type === 'expense')
           .reduce((sum, t) => sum + t.amount, 0);
 
         const totalBalance = totalIncome - totalExpenses;
 
-        const monthlyExpenses = this.getMonthlyExpenses(transactions);
-        const expensesByCategory = this.getExpensesByCategory(transactions);
-        const monthlyIncome = this.getMonthlyIncome(transactions);
+        const monthlyExpenses = this.getMonthlyExpenses(companyTransactions);
+        const expensesByCategory = this.getExpensesByCategory(companyTransactions);
+        const monthlyIncome = this.getMonthlyIncome(companyTransactions);
 
         const growthPercentage = this.calculateGrowthPercentage(monthlyIncome);
-        const alerts = this.generateAlerts(budgets, transactions);
+        const companyBudgets = budgets.filter(b => b.companyId === currentCompanyId);
+        const alerts = this.generateAlerts(companyBudgets, companyTransactions);
 
         return {
           totalBalance,
@@ -44,11 +52,11 @@ export class DashboardService {
           expensesByCategory,
           monthlyIncome,
           growthPercentage,
-          pendingApprovals: transactions.filter(t => t.status === 'pending').length,
-          overdueBudgets: budgets.filter(b => b.status === 'exceeded').length,
+          pendingApprovals: companyTransactions.filter(t => t.status === 'pending').length,
+          overdueBudgets: companyBudgets.filter(b => b.status === 'exceeded').length,
           walletsSummary: [],
-          topExpenses: transactions.filter(t => t.type === 'expense').slice(0, 5),
-          upcomingPayments: transactions.filter(t => t.type === 'invoice' && t.status !== 'paid').slice(0, 5),
+          topExpenses: companyTransactions.filter(t => t.type === 'expense').slice(0, 5),
+          upcomingPayments: companyTransactions.filter(t => t.type === 'invoice' && t.status !== 'paid').slice(0, 5),
           alerts
         };
       })
@@ -57,28 +65,30 @@ export class DashboardService {
 
   private getMonthlyExpenses(transactions: any[]): { month: string; amount: number }[] {
     const monthlyMap = new Map<string, number>();
+    
+    // Include all expense types (pending, confirmed, paid)
+    const expenseTransactions = transactions.filter(t => t.type === 'expense');
 
-    transactions
-      .filter(t => t.type === 'expense')
-      .forEach(t => {
-        const date = new Date(t.date);
-        const month = date.toISOString().substring(0, 7); // YYYY-MM
-        monthlyMap.set(month, (monthlyMap.get(month) || 0) + t.amount);
-      });
+    expenseTransactions.forEach(t => {
+      // Parse date string directly without timezone conversion
+      const month = t.date.substring(0, 7); // YYYY-MM format
+      monthlyMap.set(month, (monthlyMap.get(month) || 0) + t.amount);
+    });
 
-    return Array.from(monthlyMap.entries())
+    const result = Array.from(monthlyMap.entries())
       .map(([month, amount]) => ({ month, amount }))
       .sort((a, b) => a.month.localeCompare(b.month));
+    
+    return result;
   }
 
   private getMonthlyIncome(transactions: any[]): { month: string; amount: number }[] {
     const monthlyMap = new Map<string, number>();
 
     transactions
-      .filter(t => t.type === 'income')
+      .filter(t => t.type === 'income' || (t.type === 'invoice' && t.status === 'paid'))
       .forEach(t => {
-        const date = new Date(t.date);
-        const month = date.toISOString().substring(0, 7);
+        const month = t.date.substring(0, 7); // YYYY-MM format
         monthlyMap.set(month, (monthlyMap.get(month) || 0) + t.amount);
       });
 

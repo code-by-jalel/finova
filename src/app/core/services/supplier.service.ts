@@ -19,7 +19,6 @@ export class SupplierService implements OnDestroy {
     private authService: AuthService
   ) {
     this.loadSuppliers();
-    // S'abonner aux changements de compagnie pour recharger les fournisseurs
     this.authService.currentCompany$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -38,9 +37,7 @@ export class SupplierService implements OnDestroy {
     }
   }
 
-  // Récupère tous les fournisseurs de l'entreprise
   getAll(): Observable<Supplier[]> {
-    // Forcer le rechargement si les données sont vides et qu'on a une compagnie
     const currentValue = this.suppliersSubject.getValue();
     if (currentValue.length === 0 && this.authService.getCurrentCompanyId()) {
       this.loadSuppliers();
@@ -54,7 +51,6 @@ export class SupplierService implements OnDestroy {
     );
   }
 
-  // Crée un nouveau fournisseur
   create(supplier: Omit<Supplier, 'id' | 'companyId'>): Observable<Supplier> {
     const companyId = this.authService.getCurrentCompanyId();
     const newSupplier = {
@@ -68,7 +64,6 @@ export class SupplierService implements OnDestroy {
     );
   }
 
-  // Modifie un fournisseur
   update(id: string, updates: Partial<Supplier>): Observable<Supplier> {
     return this.http.patch<Supplier>(
       `${this.apiUrl}/suppliers/${id}`,
@@ -76,14 +71,12 @@ export class SupplierService implements OnDestroy {
     );
   }
 
-  // Supprime un fournisseur
   delete(id: string): Observable<void> {
     return this.http.delete<void>(
       `${this.apiUrl}/suppliers/${id}`
     );
   }
 
-  // Recherche par nom, email ou ville
   search(query: string): Observable<Supplier[]> {
     const companyId = this.authService.getCurrentCompanyId();
     return this.http.get<Supplier[]>(

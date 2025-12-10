@@ -12,17 +12,11 @@ export class ReportService {
     this.downloadFile(csv, 'transactions-report.csv', 'text/csv');
   }
 
-  /**
-   * Generate a CSV report for budgets
-   */
   generateBudgetCSV(budgets: Budget[]): void {
     const csv = this.budgetsToCSV(budgets);
     this.downloadFile(csv, 'budgets-report.csv', 'text/csv');
   }
 
-  /**
-   * Generate a combined financial summary PDF
-   */
   generateFinancialSummaryPDF(
     totalBalance: number,
     totalIncome: number,
@@ -40,9 +34,6 @@ export class ReportService {
     this.downloadFile(pdfContent, 'financial-summary.txt', 'text/plain');
   }
 
-  /**
-   * Convert transactions to CSV format
-   */
   private transactionsToCSV(transactions: Transaction[]): string {
     const headers = ['Date', 'Description', 'Type', 'Status', 'Amount', 'Category', 'Invoice', 'DueDate'];
     const rows = transactions.map(t => [
@@ -64,9 +55,7 @@ export class ReportService {
     return csvContent;
   }
 
-  /**
-   * Convert budgets to CSV format
-   */
+
   private budgetsToCSV(budgets: Budget[]): string {
     const headers = ['Department', 'Category', 'Month', 'Limit', 'Spent', 'Forecast', 'Status'];
     const rows = budgets.map(b => [
@@ -87,9 +76,6 @@ export class ReportService {
     return csvContent;
   }
 
-  /**
-   * Generate PDF-like content (as text)
-   */
   private generatePDFContent(
     totalBalance: number,
     totalIncome: number,
@@ -126,7 +112,6 @@ Transactions payées:            ${transactions.filter(t => t.status === 'paid')
 Dernières transactions:
 `;
 
-    // Add latest 10 transactions
     transactions.slice(0, 10).forEach((t, idx) => {
       content += `
 ${idx + 1}. ${t.date} - ${t.description}
@@ -146,7 +131,6 @@ Budgets dépassés:               ${budgets.filter(b => b.status === 'exceeded')
 Dépenses budgétaires:
 `;
 
-    // Add budget summary
     budgets.forEach((b, idx) => {
       const percent = ((b.spent / b.limit) * 100).toFixed(1);
       content += `
@@ -167,9 +151,6 @@ de la génération.
     return content;
   }
 
-  /**
-   * Download file helper
-   */
   private downloadFile(content: string, filename: string, mimeType: string): void {
     const blob = new Blob([content], { type: mimeType });
     const url = window.URL.createObjectURL(blob);
@@ -180,9 +161,6 @@ de la génération.
     window.URL.revokeObjectURL(url);
   }
 
-  /**
-   * Export data to JSON
-   */
   exportToJSON(data: any, filename: string): void {
     const json = JSON.stringify(data, null, 2);
     this.downloadFile(json, filename, 'application/json');

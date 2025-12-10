@@ -64,7 +64,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   applyFilters(): void {
     let filtered = this.transactions;
 
-    // Filter by search query
     if (this.searchQuery) {
       filtered = filtered.filter(t =>
         t.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -72,17 +71,14 @@ export class TransactionListComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Filter by type
     if (this.filterType !== 'all') {
       filtered = filtered.filter(t => t.type === this.filterType);
     }
 
-    // Filter by status
     if (this.filterStatus !== 'all') {
       filtered = filtered.filter(t => t.status === this.filterStatus);
     }
 
-    // Filter by date range
     if (this.startDate) {
       filtered = filtered.filter(t => new Date(t.date) >= new Date(this.startDate));
     }

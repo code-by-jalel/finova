@@ -17,12 +17,10 @@ export class AdminGuard implements CanActivate {
   ): boolean {
     const user = this.authService.getCurrentUser();
 
-    // Admin et Treasurer peuvent accéder à l'administration
     if (user && (user.role === 'admin' || user.role === 'treasurer')) {
       return true;
     }
 
-    // Redirection if not authorized
     this.router.navigate(['/dashboard']);
     return false;
   }

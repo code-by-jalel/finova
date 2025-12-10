@@ -45,7 +45,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   loadData(): void {
     this.loading = true;
     
-    // Utiliser combineLatest pour charger les données en parallèle
     combineLatest([
       this.transactionService.getAll(),
       this.budgetService.getAll(),

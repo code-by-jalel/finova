@@ -21,10 +21,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   messageType: 'success' | 'error' | null = null;
   destroy$ = new Subject<void>();
 
-  // Rôles disponibles
   roles = ['admin', 'treasurer', 'manager', 'accountant', 'viewer'];
 
-  // Pour l'édition de rôle
   editingUserId: string | null = null;
   editingRole: string = '';
 

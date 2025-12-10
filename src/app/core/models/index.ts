@@ -31,7 +31,6 @@ export interface AuthResponse {
   user: User;
 }
 
-// ============== E-WALLETS ==============
 
 export type WalletType = 'operational' | 'savings' | 'client_funds' | 'investment' | 'reserve';
 
@@ -49,7 +48,6 @@ export interface Wallet {
   description: string;
 }
 
-// ============== TRANSACTIONS ==============
 
 export type TransactionType = 'invoice' | 'expense' | 'transfer' | 'income' | 'adjustment';
 export type TransactionStatus = 'pending' | 'confirmed' | 'paid' | 'rejected' | 'completed';
@@ -81,7 +79,6 @@ export interface Transaction {
   destinationWallet?: string;
 }
 
-// ============== BUDGETS ==============
 
 export type BudgetStatus = 'healthy' | 'warning' | 'exceeded' | 'pending';
 
@@ -100,7 +97,6 @@ export interface Budget {
   notes: string;
 }
 
-// ============== CONTACTS ==============
 
 export interface Supplier {
   id: string;
@@ -138,7 +134,6 @@ export interface Client {
   createdAt: string;
 }
 
-// ============== ALERTS ==============
 
 export type AlertType = 'low_balance' | 'budget_warning' | 'invoice_pending' | 'invoice_overdue' | 'transaction_anomaly' | 'approval_required';
 export type AlertSeverity = 'info' | 'warning' | 'danger';
@@ -162,7 +157,6 @@ export interface Alert {
   read: boolean;
 }
 
-// ============== DASHBOARD ==============
 
 export interface DashboardData {
   totalBalance: number;
@@ -180,7 +174,6 @@ export interface DashboardData {
   upcomingPayments: Transaction[];
 }
 
-// ============== AUDIT LOG ==============
 
 export interface AuditLog {
   id: string;

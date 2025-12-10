@@ -61,9 +61,7 @@ export class WalletDetailComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (allTransactions) => {
-          // Filter transactions for this wallet
           this.transactions = allTransactions.filter(t => t.walletId === walletId);
-          // Sort by date descending
           this.transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           this.cdr.markForCheck();
         },

@@ -2,19 +2,15 @@
   <div class="signup-card">
     <h2>Créer un Compte</h2>
 
-    <!-- Success Message -->
     <div *ngIf="success" class="alert alert-success">
       {{ success }}
     </div>
 
-    <!-- Error Message -->
     <div *ngIf="error" class="alert alert-danger">
       {{ error }}
     </div>
 
-    <!-- Signup Form -->
     <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
-      <!-- Nom -->
       <div class="form-group">
         <label for="name">Nom Complet</label>
         <input
@@ -30,7 +26,6 @@
         </div>
       </div>
 
-      <!-- Email -->
       <div class="form-group">
         <label for="email">Email</label>
         <input
@@ -46,7 +41,6 @@
         </div>
       </div>
 
-      <!-- Entreprise -->
       <div class="form-group">
         <label for="companyId">Entreprise</label>
         <div *ngIf="companiesLoading" class="alert alert-info">
@@ -69,7 +63,6 @@
         </div>
       </div>
 
-      <!-- Password -->
       <div class="form-group">
         <label for="password">Mot de Passe</label>
         <input
@@ -85,7 +78,6 @@
         </div>
       </div>
 
-      <!-- Confirm Password -->
       <div class="form-group">
         <label for="confirmPassword">Confirmer le Mot de Passe</label>
         <input
@@ -101,7 +93,6 @@
         </div>
       </div>
 
-      <!-- Submit Button -->
       <button
         type="submit"
         class="btn btn-primary btn-block"
@@ -112,7 +103,6 @@
       </button>
     </form>
 
-    <!-- Link to Login -->
     <div class="login-link">
       <p>Vous avez déjà un compte?</p>
       <button type="button" class="btn btn-link" (click)="goToLogin()">
