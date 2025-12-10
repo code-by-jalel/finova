@@ -1,0 +1,243 @@
+import { Injectable, OnDestroy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { tap, map, switchMap, takeUntil } from 'rxjs/operators';
+import { Transaction, TransactionType, TransactionStatus } from '../models';
+import { AuthService } from './auth.service';
+import { WalletService } from './wallet.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class TransactionService implements OnDestroy {
+  private apiUrl = 'http://localhost:3000';
+  private transactionsSubject = new BehaviorSubject<Transaction[]>([]);
+  public transactions$ = this.transactionsSubject.asObservable();
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private walletService: WalletService
+  ) {
+    this.loadTransactions();
+    // S'abonner aux changements de compagnie pour recharger les transactions
+    this.authService.currentCompany$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadTransactions();
+      });
+  }
+
+  private loadTransactions(): void {
+    const companyId = this.authService.getCurrentCompanyId();
+    if (companyId) {
+      this.http.get<Transaction[]>(`${this.apiUrl}/transactions`)
+        .subscribe(transactions => {
+          const filteredTransactions = transactions.filter(tx => tx.companyId === companyId);
+          this.transactionsSubject.next(filteredTransactions);
+        });
+    }
+  }
+
+  // Récupère toutes les transactions de l'entreprise (appel direct)
+  getAll(): Observable<Transaction[]> {
+    // Forcer le rechargement si les données sont vides et qu'on a une compagnie
+    const currentValue = this.transactionsSubject.getValue();
+    if (currentValue.length === 0 && this.authService.getCurrentCompanyId()) {
+      this.loadTransactions();
+    }
+    return this.transactions$;
+  }
+
+  // Récupère les transactions d'un portefeuille
+  getByWallet(walletId: string): Observable<Transaction[]> {
+    return this.transactions$.pipe(
+      map(transactions => transactions.filter(tx => tx.walletId === walletId))
+    );
+  }
+
+  getById(id: string): Observable<Transaction> {
+    return this.http.get<Transaction>(
+      `${this.apiUrl}/transactions/${id}`
+    );
+  }
+
+  // Crée une nouvelle transaction
+  create(transaction: Omit<Transaction, 'id' | 'companyId' | 'createdBy'>): Observable<Transaction> {
+    const companyId = this.authService.getCurrentCompanyId();
+    const user = this.authService.getCurrentUser();
+    
+    const newTx: Transaction = {
+      ...transaction,
+      id: this.generateId(),
+      companyId: companyId || '',
+      createdBy: user?.id || '',
+      date: new Date(transaction.date).toISOString().split('T')[0]
+    };
+
+    return this.http.post<Transaction>(`${this.apiUrl}/transactions`, newTx)
+      .pipe(
+        switchMap(tx => {
+          // Mettre à jour le solde du portefeuille
+          const amount = tx.type === 'income' || tx.type === 'invoice' ? tx.amount : -tx.amount;
+          return this.walletService.updateBalance(tx.walletId, amount).pipe(
+            map(() => tx)
+          );
+        })
+      );
+  }
+
+  // Modifie une transaction
+  update(id: string, updates: Partial<Transaction>): Observable<Transaction> {
+    return this.http.patch<Transaction>(
+      `${this.apiUrl}/transactions/${id}`,
+      updates
+    );
+  }
+
+  // Approuve une transaction
+  approve(id: string, approverId: string): Observable<Transaction> {
+    return this.update(id, { 
+      approvedBy: approverId,
+      status: 'confirmed'
+    });
+  }
+
+  // Rejette une transaction
+  reject(id: string): Observable<Transaction> {
+    return this.update(id, { 
+      status: 'rejected'
+    });
+  }
+
+  // Marque une transaction comme payée
+  markAsPaid(id: string): Observable<Transaction> {
+    return this.update(id, { 
+      status: 'paid',
+      paidDate: new Date().toISOString().split('T')[0]
+    });
+  }
+
+  // Supprime une transaction
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/transactions/${id}`
+    );
+  }
+
+  // Recherche par description/facture
+  search(query: string): Observable<Transaction[]> {
+    return this.transactions$.pipe(
+      map(transactions => 
+        transactions.filter(tx => 
+          tx.description.toLowerCase().includes(query.toLowerCase()) ||
+          tx.invoiceNumber?.toLowerCase().includes(query.toLowerCase())
+        )
+      )
+    );
+  }
+
+  // Filtre par type (invoice/expense/transfer/income)
+  filterByType(type: TransactionType): Observable<Transaction[]> {
+    return this.transactions$.pipe(
+      map(transactions => transactions.filter(tx => tx.type === type))
+    );
+  }
+
+  // Filtre par statut
+  filterByStatus(status: TransactionStatus): Observable<Transaction[]> {
+    return this.transactions$.pipe(
+      map(transactions => transactions.filter(tx => tx.status === status))
+    );
+  }
+
+  // Filtre par catégorie
+  filterByCategory(category: string): Observable<Transaction[]> {
+    return this.transactions$.pipe(
+      map(transactions => transactions.filter(tx => tx.category === category))
+    );
+  }
+
+  // Filtre par date
+  filterByDateRange(startDate: string, endDate: string): Observable<Transaction[]> {
+    return this.transactions$.pipe(
+      map(transactions => 
+        transactions.filter(tx => tx.date >= startDate && tx.date <= endDate)
+      )
+    );
+  }
+
+  // Récupère les transactions en attente d'approbation
+  getPendingApprovals(): Observable<Transaction[]> {
+    return this.transactions$.pipe(
+      map(transactions => 
+        transactions.filter(tx => tx.status === 'pending' && !tx.approvedBy)
+      )
+    );
+  }
+
+  // Récupère les factures non payées
+  getOverdueInvoices(): Observable<Transaction[]> {
+    const today = new Date().toISOString().split('T')[0];
+    return this.transactions$.pipe(
+      map(transactions => 
+        transactions.filter(tx => 
+          tx.type === 'invoice' && 
+          tx.status !== 'paid' && 
+          tx.dueDate && 
+          tx.dueDate < today
+        )
+      )
+    );
+  }
+
+  // Récupère les transactions d'un client
+  getByClient(clientId: string): Observable<Transaction[]> {
+    return this.transactions$.pipe(
+      map(transactions => 
+        transactions.filter(tx => tx.relatedEntity === clientId)
+      )
+    );
+  }
+
+  // Récupère les transactions d'un fournisseur
+  getBySupplier(supplierId: string): Observable<Transaction[]> {
+    return this.transactions$.pipe(
+      map(transactions => 
+        transactions.filter(tx => tx.relatedEntity === supplierId)
+      )
+    );
+  }
+
+  // Calcule le total des revenus pour une période
+  getTotalIncome(startDate: string, endDate: string): Observable<number> {
+    return this.filterByDateRange(startDate, endDate).pipe(
+      map(transactions => 
+        transactions
+          .filter(tx => (tx.type === 'income' || tx.type === 'invoice') && tx.status === 'paid')
+          .reduce((sum, tx) => sum + tx.amount, 0)
+      )
+    );
+  }
+
+  // Calcule le total des dépenses pour une période
+  getTotalExpenses(startDate: string, endDate: string): Observable<number> {
+    return this.filterByDateRange(startDate, endDate).pipe(
+      map(transactions => 
+        transactions
+          .filter(tx => (tx.type === 'expense') && tx.status === 'paid')
+          .reduce((sum, tx) => sum + tx.amount, 0)
+      )
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private generateId(): string {
+    return 'tx_' + Math.random().toString(36).substr(2, 9);
+  }
+}

@@ -1,0 +1,124 @@
+<div class="user-management-container">
+  <div class="header">
+    <h2>Gestion des Utilisateurs</h2>
+    <p>Approuver les nouveaux comptes et gérer les rôles</p>
+  </div>
+
+  <!-- Message d'alerte -->
+  <div *ngIf="message" [class]="'alert alert-' + messageType">
+    {{ message }}
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button 
+      class="tab-button"
+      [class.active]="selectedTab === 'pending'"
+      (click)="selectedTab = 'pending'">
+      <span class="badge">{{ pendingUsers.length }}</span>
+      En attente d'approbation
+    </button>
+    <button 
+      class="tab-button"
+      [class.active]="selectedTab === 'active'"
+      (click)="selectedTab = 'active'">
+      <span class="badge">{{ activeUsers.length }}</span>
+      Utilisateurs Actifs
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <span>Chargement...</span>
+  </div>
+
+  <!-- Tab: En attente d'approbation -->
+  <div *ngIf="selectedTab === 'pending' && !loading" class="tab-content">
+    <div *ngIf="pendingUsers.length === 0" class="empty-state">
+      <p>Aucun utilisateur en attente d'approbation</p>
+    </div>
+
+    <div *ngIf="pendingUsers.length > 0" class="users-grid">
+      <div *ngFor="let user of pendingUsers" class="user-card pending">
+        <div class="user-info">
+          <h3>{{ user.name }}</h3>
+          <p class="email">{{ user.email }}</p>
+          <p class="company-id">{{ currentCompanyId }}</p>
+        </div>
+
+        <div class="user-role-pending">
+          <label>Attribuer le rôle</label>
+          <select [(ngModel)]="editingRole" class="role-select">
+            <option value="">-- Sélectionner un rôle --</option>
+            <option *ngFor="let role of roles" [value]="role">
+              {{ role | titlecase }}
+            </option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button 
+            class="btn btn-success"
+            (click)="approveUser(user.id, editingRole)"
+            [disabled]="!editingRole || loading">
+            ✓ Approuver
+          </button>
+          <button 
+            class="btn btn-danger"
+            (click)="rejectUser(user.id)"
+            [disabled]="loading">
+            ✗ Rejeter
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Utilisateurs Actifs -->
+  <div *ngIf="selectedTab === 'active' && !loading" class="tab-content">
+    <div *ngIf="activeUsers.length === 0" class="empty-state">
+      <p>Aucun utilisateur actif</p>
+    </div>
+
+    <div *ngIf="activeUsers.length > 0" class="users-grid">
+      <div *ngFor="let user of activeUsers" class="user-card active">
+        <div class="user-info">
+          <h3>{{ user.name }}</h3>
+          <p class="email">{{ user.email }}</p>
+          <p class="role-display">Rôle: <strong>{{ user.role | titlecase }}</strong></p>
+          <p class="permissions-display">{{ getPermissionsDisplay(user) }}</p>
+        </div>
+
+        <div class="user-role-edit" *ngIf="editingUserId !== user.id">
+          <button 
+            class="btn btn-primary"
+            (click)="startEditRole(user)">
+            Modifier le rôle
+          </button>
+        </div>
+
+        <div class="user-role-edit" *ngIf="editingUserId === user.id">
+          <label>Nouveau rôle</label>
+          <select [(ngModel)]="editingRole" class="role-select">
+            <option *ngFor="let role of roles" [value]="role">
+              {{ role | titlecase }}
+            </option>
+          </select>
+          <div class="edit-actions">
+            <button 
+              class="btn btn-success"
+              (click)="saveRole(user.id)"
+              [disabled]="loading">
+              Enregistrer
+            </button>
+            <button 
+              class="btn btn-secondary"
+              (click)="cancelEditRole()">
+              Annuler
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

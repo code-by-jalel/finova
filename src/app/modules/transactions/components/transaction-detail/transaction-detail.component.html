@@ -1,0 +1,47 @@
+<div class="detail-container" *ngIf="!loading">
+  <div class="detail-card" *ngIf="transaction">
+    <div class="detail-header">
+      <h2>Détails de la transaction</h2>
+      <div class="action-buttons">
+        <button class="btn btn-warning" (click)="edit()">Modifier</button>
+        <button class="btn btn-danger" (click)="delete()">Supprimer</button>
+        <button class="btn btn-secondary" (click)="back()">Retour</button>
+      </div>
+    </div>
+
+    <div class="detail-content">
+      <div class="detail-group">
+        <label>Type</label>
+        <span class="badge" [ngClass]="getTypeClass(transaction.type)">
+          {{ getTypeLabel(transaction.type) }}
+        </span>
+      </div>
+
+      <div class="detail-group">
+        <label>Catégorie</label>
+        <span>{{ transaction.category }}</span>
+      </div>
+
+      <div class="detail-group">
+        <label>Montant</label>
+        <span [class.text-success]="transaction.type === 'income'" [class.text-danger]="transaction.type === 'expense'">
+          {{ transaction.type === 'income' ? '+' : '-' }}{{ transaction.amount }} TND
+        </span>
+      </div>
+
+      <div class="detail-group">
+        <label>Description</label>
+        <span>{{ transaction.description }}</span>
+      </div>
+
+      <div class="detail-group">
+        <label>Date</label>
+        <span>{{ transaction.date | date: 'dd/MM/yyyy' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" *ngIf="!transaction">
+    Transaction non trouvée
+  </div>
+</div>

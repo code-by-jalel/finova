@@ -1,0 +1,47 @@
+<div class="supplier-container">
+  <div class="supplier-header">
+    <h2>Fournisseurs</h2>
+    <button class="btn btn-primary" (click)="newSupplier()">+ Nouveau Fournisseur</button>
+  </div>
+
+  <div class="search-box">
+    <input
+      type="text"
+      placeholder="Rechercher un fournisseur..."
+      [(ngModel)]="searchQuery"
+      (input)="onSearch()"
+      class="form-control"
+    />
+  </div>
+
+  <div class="suppliers-table">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Ville</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let supplier of filteredSuppliers">
+          <td>{{ supplier.name }}</td>
+          <td>{{ supplier.email }}</td>
+          <td>{{ supplier.phone }}</td>
+          <td>{{ supplier.city }}</td>
+          <td>
+            <button class="btn btn-sm btn-info" (click)="viewSupplier(supplier.id)">Voir</button>
+            <button class="btn btn-sm btn-warning" (click)="editSupplier(supplier.id)">Modifier</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteSupplier(supplier.id)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredSuppliers.length === 0" class="empty-message">
+      Aucun fournisseur trouvé
+    </div>
+  </div>
+</div>

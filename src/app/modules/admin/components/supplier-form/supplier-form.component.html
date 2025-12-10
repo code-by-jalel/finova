@@ -1,0 +1,117 @@
+<div class="form-container">
+  <div class="form-card">
+    <h2>{{ isEditMode ? 'Modifier le fournisseur' : 'Nouveau fournisseur' }}</h2>
+
+    <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Nom</label>
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            [class.is-invalid]="submitted && f['name'].errors"
+            formControlName="name"
+            placeholder="Nom du fournisseur"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            class="form-control"
+            [class.is-invalid]="submitted && f['email'].errors"
+            formControlName="email"
+            placeholder="email@example.com"
+          />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Téléphone</label>
+          <input
+            type="tel"
+            id="phone"
+            class="form-control"
+            [class.is-invalid]="submitted && f['phone'].errors"
+            formControlName="phone"
+            placeholder="+33123456789"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="companyNumber">Numéro SIRET</label>
+          <input
+            type="text"
+            id="companyNumber"
+            class="form-control"
+            formControlName="companyNumber"
+            placeholder="FR12345678901"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Adresse</label>
+        <input
+          type="text"
+          id="address"
+          class="form-control"
+          [class.is-invalid]="submitted && f['address'].errors"
+          formControlName="address"
+          placeholder="123 Rue..."
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="city">Ville</label>
+          <input
+            type="text"
+            id="city"
+            class="form-control"
+            [class.is-invalid]="submitted && f['city'].errors"
+            formControlName="city"
+            placeholder="Paris"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="postalCode">Code postal</label>
+          <input
+            type="text"
+            id="postalCode"
+            class="form-control"
+            [class.is-invalid]="submitted && f['postalCode'].errors"
+            formControlName="postalCode"
+            placeholder="75001"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="country">Pays</label>
+          <input
+            type="text"
+            id="country"
+            class="form-control"
+            [class.is-invalid]="submitted && f['country'].errors"
+            formControlName="country"
+            placeholder="France"
+          />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          {{ loading ? 'En cours...' : 'Enregistrer' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="router.navigate(['/admin/suppliers'])">
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

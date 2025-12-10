@@ -1,0 +1,71 @@
+<div class="wallet-form-container">
+  <div class="form-header">
+    <h2>{{ isEditMode ? 'Modifier Portefeuille' : 'Nouveau Portefeuille' }}</h2>
+  </div>
+
+  <form [formGroup]="walletForm" (ngSubmit)="save()" class="wallet-form">
+    <div class="form-group">
+      <label>Nom du Portefeuille *</label>
+      <input type="text" formControlName="name" class="form-control" placeholder="Ex: Trésorerie Opérationnelle">
+      <div class="error" *ngIf="walletForm.get('name')?.invalid && walletForm.get('name')?.touched">
+        Nom requis (min 3 caractères)
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Type *</label>
+        <select formControlName="type" class="form-control">
+          <option value="">Sélectionner un type</option>
+          <option value="operational">Opérationnel</option>
+          <option value="savings">Épargne</option>
+          <option value="client_funds">Fonds Clients</option>
+          <option value="investment">Investissement</option>
+          <option value="reserve">Réserve</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Devise *</label>
+        <select formControlName="currency" class="form-control">
+          <option value="TND">TND</option>
+          <option value="USD">USD ($)</option>
+          <option value="GBP">GBP (£)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Solde Initial *</label>
+        <input type="number" formControlName="initialBalance" class="form-control" placeholder="0.00" step="0.01">
+      </div>
+
+      <div class="form-group">
+        <label>Limite de Crédit</label>
+        <input type="number" formControlName="creditLimit" class="form-control" placeholder="0.00" step="0.01">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea formControlName="description" class="form-control" rows="3" placeholder="Description du portefeuille..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Statut</label>
+      <select formControlName="status" class="form-control">
+        <option value="active">Actif</option>
+        <option value="frozen">Gelé</option>
+        <option value="suspended">Suspendu</option>
+      </select>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Annuler</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!walletForm.valid || saving">
+        {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+      </button>
+    </div>
+  </form>
+</div>

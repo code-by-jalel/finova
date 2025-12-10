@@ -1,0 +1,161 @@
+.audit-log-container {
+  padding: 20px;
+}
+
+.audit-header {
+  margin-bottom: 30px;
+}
+
+.audit-header h2 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.subtitle {
+  margin: 0;
+  color: #999;
+  font-size: 14px;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.search-box {
+  grid-column: 1 / -1;
+}
+
+.form-control {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.audit-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+.table thead {
+  background: #f8f9fa;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.table th {
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+.table td {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 13px;
+}
+
+.table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.action-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  color: white;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.resource-type {
+  display: block;
+  font-weight: 600;
+  color: #333;
+}
+
+.resource-id {
+  display: block;
+  color: #999;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.changes {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.changes small {
+  display: block;
+  color: #666;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  border-top: 1px solid #eee;
+}
+
+.btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #5a6268;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-style: italic;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}

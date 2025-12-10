@@ -1,0 +1,99 @@
+<div class="wallet-detail-container">
+  <div class="wallet-detail-header" *ngIf="wallet">
+    <button class="btn btn-secondary" (click)="back()">← Retour</button>
+    <h2>{{ wallet.name }}</h2>
+    <button class="btn btn-warning" (click)="edit()">Modifier</button>
+  </div>
+
+  <div class="wallet-detail-content" *ngIf="wallet">
+    <div class="wallet-overview">
+      <div class="info-card">
+        <h3>Solde Actuel</h3>
+        <p class="amount">{{ wallet.balance | currency:'TND':'symbol':'1.2-2' }}</p>
+      </div>
+      <div class="info-card">
+        <h3>Limite de Crédit</h3>
+        <p class="amount">{{ wallet.creditLimit | currency:'TND':'symbol':'1.2-2' }}</p>
+      </div>
+      <div class="info-card">
+        <h3>Fonds Disponibles</h3>
+        <p class="amount">{{ (wallet.balance + wallet.creditLimit) | currency:'TND':'symbol':'1.2-2' }}</p>
+      </div>
+      <div class="info-card">
+        <h3>Type</h3>
+        <p>{{ wallet.type | titlecase }}</p>
+      </div>
+    </div>
+
+    <div class="wallet-details">
+      <h3>Détails du Portefeuille</h3>
+      <table class="details-table">
+        <tr>
+          <td><strong>ID:</strong></td>
+          <td>{{ wallet.id }}</td>
+        </tr>
+        <tr>
+          <td><strong>Statut:</strong></td>
+          <td><span class="status" [class]="'status-' + wallet.status">{{ wallet.status | titlecase }}</span></td>
+        </tr>
+        <tr>
+          <td><strong>Devise:</strong></td>
+          <td>{{ wallet.currency }}</td>
+        </tr>
+        <tr>
+          <td><strong>Solde Initial:</strong></td>
+          <td>{{ wallet.initialBalance | currency:'TND':'symbol':'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td><strong>Créé le:</strong></td>
+          <td>{{ wallet.createdAt | date:'medium' }}</td>
+        </tr>
+        <tr>
+          <td><strong>Description:</strong></td>
+          <td>{{ wallet.description }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Transaction History Section -->
+    <div class="transaction-history" *ngIf="transactions.length > 0">
+      <h3>Historique des Transactions ({{ transactions.length }})</h3>
+      <table class="transactions-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Statut</th>
+            <th>Montant</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tx of transactions">
+            <td>{{ tx.date | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ tx.description }}</td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + (tx.type === 'income' ? 'success' : 'danger')">
+                {{ tx.type | titlecase }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getStatusClass(tx.status)">
+                {{ getStatusLabel(tx.status) }}
+              </span>
+            </td>
+            <td [class.text-success]="tx.type === 'income'" [class.text-danger]="tx.type === 'expense'">
+              {{ tx.type === 'income' ? '+' : '-' }}{{ tx.amount }} TND
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" *ngIf="transactions.length === 0 && !loading">
+      <p>Aucune transaction pour ce portefeuille</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Chargement...</div>
+</div>

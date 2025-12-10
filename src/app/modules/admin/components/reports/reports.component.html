@@ -1,0 +1,68 @@
+<div class="reports-container">
+  <div class="reports-header">
+    <h2>Génération de Rapports</h2>
+    <p class="subtitle">Exportez vos données financières</p>
+    <button class="btn btn-primary" (click)="refreshData()" [disabled]="loading">
+      {{ loading ? 'Chargement...' : '🔄 Actualiser les données' }}
+    </button>
+  </div>
+
+  <div class="stats-summary" *ngIf="dashboardData">
+    <div class="stat-card">
+      <div class="stat-label">Transactions</div>
+      <div class="stat-value">{{ transactions.length }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Budgets</div>
+      <div class="stat-value">{{ budgets.length }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Solde Total</div>
+      <div class="stat-value">{{ dashboardData.totalBalance | currency:'TND':'symbol':'1.0-0' }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Revenus</div>
+      <div class="stat-value text-success">{{ dashboardData.totalIncome | currency:'TND':'symbol':'1.0-0' }}</div>
+    </div>
+  </div>
+
+  <div class="reports-grid">
+    <div class="report-card" *ngFor="let report of reportTypes">
+      <div class="report-header">
+        <div class="report-icon">{{ report.icon }}</div>
+        <h3>{{ report.label }}</h3>
+      </div>
+      <p class="report-description">
+        <span *ngIf="report.id === 'transactions_csv'">
+          Téléchargez un fichier CSV contenant la liste de toutes vos transactions
+        </span>
+        <span *ngIf="report.id === 'budgets_csv'">
+          Téléchargez un fichier CSV contenant tous vos budgets et analyses
+        </span>
+        <span *ngIf="report.id === 'financial_summary'">
+          Obtenez un rapport complet de votre situation financière
+        </span>
+        <span *ngIf="report.id === 'export_all'">
+          Exportez toutes vos données en format JSON pour sauvegarde
+        </span>
+      </p>
+      <button 
+        class="btn btn-primary" 
+        (click)="generateReport(report.id)"
+        [disabled]="generatingReport !== null || loading">
+        <span *ngIf="generatingReport === report.id">⏳ Génération...</span>
+        <span *ngIf="generatingReport !== report.id">📥 Télécharger</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="report-info">
+    <h3>ℹ️ Information</h3>
+    <ul>
+      <li>Les rapports sont générés avec les données actuelles de votre système</li>
+      <li>Les fichiers CSV peuvent être ouverts dans Excel ou Google Sheets</li>
+      <li>Les données sensibles ne sont jamais partagées</li>
+      <li>Les rapports sont générés côté client pour votre sécurité</li>
+    </ul>
+  </div>
+</div>

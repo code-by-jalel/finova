@@ -1,0 +1,66 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Finova</h1>
+      <p>Gestion Financière d'Entreprise</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          class="form-control"
+          [class.is-invalid]="submitted && f['email'].errors"
+          id="email"
+          formControlName="email"
+          placeholder="votre@email.com"
+        />
+        <div class="invalid-feedback" *ngIf="submitted && f['email'].errors">
+          <small *ngIf="f['email'].errors['required']">L'email est requis</small>
+          <small *ngIf="f['email'].errors['email']">Email invalide</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input
+          type="password"
+          class="form-control"
+          [class.is-invalid]="submitted && f['password'].errors"
+          id="password"
+          formControlName="password"
+          placeholder="••••••••"
+        />
+        <div class="invalid-feedback" *ngIf="submitted && f['password'].errors">
+          <small *ngIf="f['password'].errors['required']">Le mot de passe est requis</small>
+          <small *ngIf="f['password'].errors['minlength']">Min 6 caractères</small>
+        </div>
+      </div>
+
+      <div class="alert alert-danger" *ngIf="error">{{ error }}</div>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        [disabled]="loading"
+      >
+        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-2"></span>
+        {{ loading ? 'Connexion en cours...' : 'Se connecter' }}
+      </button>
+    </form>
+
+    <div class="signup-section">
+      <p>Pas encore de compte?</p>
+      <button type="button" class="btn btn-link" routerLink="/auth/signup">
+        S'inscrire ici
+      </button>
+    </div>
+
+    <div class="login-hint">
+      <p><strong>Essai:</strong></p>
+      <p>Email: test@finova.fr</p>
+      <p>Mot de passe: password123</p>
+    </div>
+  </div>
+</div>

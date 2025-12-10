@@ -1,0 +1,70 @@
+<div class="alerts-dashboard-container">
+  <div class="alerts-header">
+    <div class="header-info">
+      <h2>Alertes et Notifications</h2>
+      <span class="unread-badge" *ngIf="getUnreadCount() > 0">
+        {{ getUnreadCount() }} non lu{{ getUnreadCount() > 1 ? 's' : '' }}
+      </span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-sm btn-outline" (click)="markAllAsRead()" *ngIf="getUnreadCount() > 0">
+        Marquer tout comme lu
+      </button>
+      <button class="btn btn-sm btn-outline-danger" (click)="dismissAll()" *ngIf="alerts.length > 0">
+        Tout supprimer
+      </button>
+    </div>
+  </div>
+
+  <div class="filters">
+    <select class="form-control" [(ngModel)]="filterSeverity" (change)="onFilterChange()">
+      <option value="all">Toutes les sévérités</option>
+      <option value="danger">Critique</option>
+      <option value="warning">Attention</option>
+      <option value="info">Information</option>
+    </select>
+  </div>
+
+  <div class="alerts-list" *ngIf="filteredAlerts.length > 0">
+    <div 
+      class="alert-item"
+      [ngClass]="[getSeverityClass(alert.severity), alert.read ? 'read' : 'unread']"
+      *ngFor="let alert of filteredAlerts"
+    >
+      <div class="alert-icon">{{ getSeverityIcon(alert.severity) }}</div>
+      <div class="alert-content">
+        <div class="alert-header">
+          <h4>{{ alert.title }}</h4>
+          <span class="severity-badge" [ngClass]="'severity-' + alert.severity">
+            {{ getSeverityLabel(alert.severity) }}
+          </span>
+        </div>
+        <p class="alert-message">{{ alert.message }}</p>
+        <div class="alert-meta">
+          <small>
+            {{ alert.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+          </small>
+        </div>
+      </div>
+      <div class="alert-actions">
+        <button 
+          class="btn btn-sm btn-outline" 
+          (click)="markAsRead(alert)"
+          *ngIf="!alert.read"
+          [disabled]="readingId === alert.id">
+          {{ readingId === alert.id ? '...' : '✓' }}
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="dismissAlert(alert)">
+          ✕
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="filteredAlerts.length === 0 && !loading">
+    <p>✨ Aucune alerte</p>
+    <small>Tout est en ordre!</small>
+  </div>
+
+  <div *ngIf="loading" class="loading">Chargement...</div>
+</div>

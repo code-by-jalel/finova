@@ -1,0 +1,59 @@
+<div class="wallets-container">
+  <div class="wallets-header">
+    <h2>Portefeuilles de l'Entreprise</h2>
+    <button class="btn btn-primary" (click)="newWallet()">+ Nouveau Portefeuille</button>
+  </div>
+
+  <div class="wallets-grid">
+    <div class="wallet-card" *ngFor="let wallet of wallets" 
+         [class.low-balance]="wallet.balance < 10000"
+         (click)="viewWallet(wallet.id)">
+      
+      <div class="wallet-header-card">
+        <div>
+          <h3>{{ wallet.name }}</h3>
+          <p class="wallet-type">{{ wallet.type | titlecase }}</p>
+        </div>
+        <div class="wallet-actions">
+          <button class="btn btn-sm btn-warning" (click)="editWallet(wallet.id); $event.stopPropagation()">Modifier</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteWallet(wallet.id); $event.stopPropagation()">Supprimer</button>
+        </div>
+      </div>
+
+      <div class="wallet-balance">
+        <div class="balance-item">
+          <span class="label">Solde</span>
+          <span class="amount" [class.negative]="wallet.balance < 0">{{ wallet.balance | currency:'TND':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="balance-item">
+          <span class="label">Limite de crédit</span>
+          <span class="amount">{{ wallet.creditLimit | currency:'TND':'symbol':'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="wallet-info">
+        <p><strong>Disponible:</strong> {{ (wallet.balance + wallet.creditLimit) | currency:'TND':'symbol':'1.2-2' }}</p>
+        <p class="wallet-status" [class]="'status-' + wallet.status">{{ wallet.status | titlecase }}</p>
+      </div>
+
+      <div class="wallet-footer">
+        <p class="wallet-description">{{ wallet.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="wallets-summary" *ngIf="wallets.length > 0">
+    <div class="summary-item">
+      <span>Solde Total</span>
+      <strong>{{ getTotalBalance() | currency:'TND':'symbol':'1.2-2' }}</strong>
+    </div>
+    <div class="summary-item">
+      <span>Crédit Disponible</span>
+      <strong>{{ getTotalCreditLimit() | currency:'TND':'symbol':'1.2-2' }}</strong>
+    </div>
+    <div class="summary-item">
+      <span>Fonds Disponibles</span>
+      <strong>{{ getAvailableFunds() | currency:'TND':'symbol':'1.2-2' }}</strong>
+    </div>
+  </div>
+</div>

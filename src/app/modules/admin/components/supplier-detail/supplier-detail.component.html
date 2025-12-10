@@ -1,0 +1,55 @@
+<div class="detail-container" *ngIf="!loading">
+  <div class="detail-card" *ngIf="supplier">
+    <div class="detail-header">
+      <h2>{{ supplier.name }}</h2>
+      <div class="action-buttons">
+        <button class="btn btn-warning" (click)="edit()">Modifier</button>
+        <button class="btn btn-danger" (click)="delete()">Supprimer</button>
+        <button class="btn btn-secondary" (click)="back()">Retour</button>
+      </div>
+    </div>
+
+    <div class="detail-content">
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Email</label>
+          <span><a href="mailto:{{ supplier.email }}">{{ supplier.email }}</a></span>
+        </div>
+
+        <div class="info-item">
+          <label>Téléphone</label>
+          <span><a href="tel:{{ supplier.phone }}">{{ supplier.phone }}</a></span>
+        </div>
+
+        <div class="info-item">
+          <label>Numéro SIRET</label>
+          <span>{{ supplier.registrationNumber || 'N/A' }}</span>
+        </div>
+
+        <div class="info-item">
+          <label>Adresse</label>
+          <span>{{ supplier.address }}</span>
+        </div>
+
+        <div class="info-item">
+          <label>Ville</label>
+          <span>{{ supplier.city }}</span>
+        </div>
+
+        <div class="info-item">
+          <label>Code Postal</label>
+          <span>{{ supplier.postalCode }}</span>
+        </div>
+
+        <div class="info-item">
+          <label>Pays</label>
+          <span>{{ supplier.country }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" *ngIf="!supplier">
+    Fournisseur non trouvé
+  </div>
+</div>

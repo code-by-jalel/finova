@@ -1,0 +1,123 @@
+<div class="signup-container">
+  <div class="signup-card">
+    <h2>Créer un Compte</h2>
+
+    <!-- Success Message -->
+    <div *ngIf="success" class="alert alert-success">
+      {{ success }}
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <!-- Signup Form -->
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <!-- Nom -->
+      <div class="form-group">
+        <label for="name">Nom Complet</label>
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          formControlName="name"
+          [class.is-invalid]="submitted && f['name'].errors"
+        />
+        <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
+          <div *ngIf="f['name'].errors['required']">Le nom est requis</div>
+          <div *ngIf="f['name'].errors['minlength']">Le nom doit contenir au moins 3 caractères</div>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          class="form-control"
+          formControlName="email"
+          [class.is-invalid]="submitted && f['email'].errors"
+        />
+        <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+          <div *ngIf="f['email'].errors['required']">L'email est requis</div>
+          <div *ngIf="f['email'].errors['email']">L'email doit être valide</div>
+        </div>
+      </div>
+
+      <!-- Entreprise -->
+      <div class="form-group">
+        <label for="companyId">Entreprise</label>
+        <div *ngIf="companiesLoading" class="alert alert-info">
+          Chargement des entreprises...
+        </div>
+        <select
+          id="companyId"
+          class="form-control"
+          formControlName="companyId"
+          [class.is-invalid]="submitted && f['companyId'].errors"
+          [disabled]="companiesLoading"
+        >
+          <option value="">-- Sélectionnez une entreprise --</option>
+          <option *ngFor="let company of companies" [value]="company.id">
+            {{ company.name }}
+          </option>
+        </select>
+        <div *ngIf="submitted && f['companyId'].errors" class="invalid-feedback">
+          <div *ngIf="f['companyId'].errors['required']">L'entreprise est requise</div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Mot de Passe</label>
+        <input
+          type="password"
+          id="password"
+          class="form-control"
+          formControlName="password"
+          [class.is-invalid]="submitted && f['password'].errors"
+        />
+        <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+          <div *ngIf="f['password'].errors['required']">Le mot de passe est requis</div>
+          <div *ngIf="f['password'].errors['minlength']">Le mot de passe doit contenir au moins 6 caractères</div>
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirmer le Mot de Passe</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          class="form-control"
+          formControlName="confirmPassword"
+          [class.is-invalid]="submitted && (f['confirmPassword'].errors || signupForm.errors?.['passwordMismatch'])"
+        />
+        <div *ngIf="submitted && (f['confirmPassword'].errors || signupForm.errors?.['passwordMismatch'])" class="invalid-feedback">
+          <div *ngIf="f['confirmPassword'].errors?.['required']">Confirmer le mot de passe</div>
+          <div *ngIf="signupForm.errors?.['passwordMismatch']">Les mots de passe ne correspondent pas</div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        [disabled]="loading"
+      >
+        <span *ngIf="!loading">S'inscrire</span>
+        <span *ngIf="loading">Inscription en cours...</span>
+      </button>
+    </form>
+
+    <!-- Link to Login -->
+    <div class="login-link">
+      <p>Vous avez déjà un compte?</p>
+      <button type="button" class="btn btn-link" (click)="goToLogin()">
+        Se connecter
+      </button>
+    </div>
+  </div>
+</div>

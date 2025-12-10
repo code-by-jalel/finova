@@ -1,0 +1,85 @@
+<div class="audit-log-container">
+  <div class="audit-header">
+    <h2>Journal d'Audit</h2>
+    <p class="subtitle">Historique des actions et modifications</p>
+  </div>
+
+  <div class="filters">
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Rechercher une action..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+        class="form-control"
+      />
+    </div>
+
+    <select class="form-control" [(ngModel)]="filterAction" (change)="onFilterChange()">
+      <option value="all">Toutes les actions</option>
+      <option *ngFor="let action of actions" [value]="action">{{ action }}</option>
+    </select>
+  </div>
+
+  <div class="audit-table" *ngIf="filteredLogs.length > 0">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date/Heure</th>
+          <th>Action</th>
+          <th>Utilisateur</th>
+          <th>Ressource</th>
+          <th>Changements</th>
+          <th>IP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of filteredLogs">
+          <td>{{ log.timestamp | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+          <td>
+            <span class="action-badge" [style.backgroundColor]="getActionColor(log.action)">
+              {{ getActionIcon(log.action) }} {{ log.action }}
+            </span>
+          </td>
+          <td>{{ log.userId }}</td>
+          <td>
+            <span class="resource-type">{{ log.resourceType }}</span>
+            <small class="resource-id">{{ log.resourceId }}</small>
+          </td>
+          <td>
+            <div class="changes" *ngIf="log.changes">
+              <small *ngFor="let change of (log.changes | keyvalue)">
+                <strong>{{ change.key }}:</strong> {{ change.value }}
+              </small>
+            </div>
+          </td>
+          <td><small>{{ log.ipAddress }}</small></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination" *ngIf="totalItems > pageSize">
+      <button
+        class="btn btn-secondary"
+        (click)="previousPage()"
+        [disabled]="currentPage === 1"
+      >
+        Précédent
+      </button>
+      <span>Page {{ currentPage }} sur {{ Math.ceil(totalItems / pageSize) }}</span>
+      <button
+        class="btn btn-secondary"
+        (click)="nextPage()"
+        [disabled]="currentPage >= Math.ceil(totalItems / pageSize)"
+      >
+        Suivant
+      </button>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="filteredLogs.length === 0 && !loading">
+    <p>Aucun journal d'audit trouvé</p>
+  </div>
+
+  <div *ngIf="loading" class="loading">Chargement...</div>
+</div>

@@ -1,0 +1,36 @@
+<aside class="sidebar" [class.closed]="!open">
+  <nav class="nav-menu">
+    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+      <span class="icon">📊</span>
+      <span class="label">Dashboard</span>
+    </a>
+
+    <a routerLink="/wallets" routerLinkActive="active" class="nav-item">
+      <span class="icon">💼</span>
+      <span class="label">Portefeuilles</span>
+    </a>
+
+    <a routerLink="/transactions" routerLinkActive="active" class="nav-item">
+      <span class="icon">💳</span>
+      <span class="label">Transactions</span>
+    </a>
+
+    <a routerLink="/budgets" routerLinkActive="active" class="nav-item">
+      <span class="icon">💰</span>
+      <span class="label">Budgets</span>
+    </a>
+
+    <a *ngIf="isTreasurer() || isAdmin()" routerLink="/admin/suppliers" routerLinkActive="active" class="nav-item">
+      <span class="icon">🏢</span>
+      <span class="label">Fournisseurs</span>
+    </a>
+
+    <a *ngIf="isAdmin()" routerLink="/admin/users" routerLinkActive="active" class="nav-item">
+      <span class="icon">👥</span>
+      <span class="label">Gestion Utilisateurs</span>
+    </a>
+
+    <a *ngIf="isTreasurer() || isAdmin()" routerLink="/admin/reports" routerLinkActive="active" class="nav-item">
+      <span class="icon">📈</span>
+      <span class="label">Rapports</span>
+    </a>

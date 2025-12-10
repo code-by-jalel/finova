@@ -1,0 +1,42 @@
+<div class="budget-container">
+  <div class="budget-header">
+    <h2>Budgets</h2>
+    <button class="btn btn-primary" (click)="newBudget()">+ Nouveau Budget</button>
+  </div>
+
+  <div class="budgets-grid">
+    <div class="budget-card" *ngFor="let budget of budgets" [class.exceeded]="isExceeded(budget.id)">
+      <div class="budget-card-header">
+        <h3>{{ budget.category }}</h3>
+        <div class="budget-actions">
+          <button class="btn btn-sm btn-info" (click)="viewBudget(budget.id)">Voir</button>
+          <button class="btn btn-sm btn-warning" (click)="editBudget(budget.id)">Modifier</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteBudget(budget.id)">Supprimer</button>
+        </div>
+      </div>
+
+      <div class="budget-card-body">
+        <div class="budget-amount">
+          <span class="amount-spent">{{ budget.spent }} TND</span>
+          <span class="amount-limit">/ {{ budget.limit }} TND</span>
+        </div>
+
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            [ngClass]="getProgressColor(getUtilizationPercentage(budget.id))"
+            [style.width.%]="Math.min(getUtilizationPercentage(budget.id), 100)"
+          ></div>
+        </div>
+
+        <div class="budget-stats">
+          <span>{{ getUtilizationPercentage(budget.id).toFixed(0) }}% utilisé</span>
+          <span *ngIf="isExceeded(budget.id)" class="badge-danger">Dépassé</span>
+          <span *ngIf="!isExceeded(budget.id) && getUtilizationPercentage(budget.id) > 80" class="badge-warning">
+            Attention
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

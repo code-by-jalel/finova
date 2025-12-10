@@ -1,0 +1,67 @@
+<div class="dashboard-container" *ngIf="!loading">
+  <h1>Dashboard Financier</h1>
+
+  <!-- KPIs Section -->
+  <div class="kpis-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Solde Actuel</div>
+      <div class="kpi-value" [class.negative]="(dashboardData?.totalBalance || 0) < 0">
+        {{ dashboardData?.totalBalance | number: '1.2-2' }} TND
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-label">Revenus Totaux</div>
+      <div class="kpi-value positive">{{ dashboardData?.totalIncome | number: '1.2-2' }} TND</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-label">Dépenses Totales</div>
+      <div class="kpi-value negative">{{ dashboardData?.totalExpenses | number: '1.2-2' }} TND</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-label">Croissance</div>
+      <div class="kpi-value" [ngClass]="getGrowthColor()">
+        {{ getGrowthIcon() }} {{ dashboardData?.growthPercentage | number: '1.1-1' }}%
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <div class="chart-container">
+      <h3>Dépenses Mensuelles</h3>
+      <canvas baseChart [data]="monthlyExpensesChart.data" [type]="monthlyExpensesChart.type" [options]="monthlyExpensesChart.options"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <h3>Dépenses par Catégorie</h3>
+      <canvas baseChart [data]="expensesByCategoryChart.data" [type]="expensesByCategoryChart.type" [options]="expensesByCategoryChart.options"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <h3>Revenus Mensuels</h3>
+      <canvas baseChart [data]="monthlyIncomeChart.data" [type]="monthlyIncomeChart.type" [options]="monthlyIncomeChart.options"></canvas>
+    </div>
+  </div>
+
+  <!-- Alerts Section -->
+  <div class="alerts-section" *ngIf="dashboardData?.alerts && dashboardData!.alerts.length > 0">
+    <h3>Alertes</h3>
+    <div class="alerts-list">
+      <div class="alert" *ngFor="let alert of dashboardData!.alerts" [ngClass]="'alert-' + alert.severity">
+        <strong>{{ alert.message }}</strong>
+        <span class="alert-date">{{ alert.createdAt | date: 'dd/MM/yyyy' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Section -->
+  <div class="stats-section" *ngIf="dashboardData">
+    <div class="stat-card">
+      <div class="stat-label">Transactions Importantes</div>
+      <div class="stat-value">{{ dashboardData.topExpenses.length }}</div>
+    </div>
+  </div>
+</div>
