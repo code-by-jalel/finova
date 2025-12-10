@@ -23,11 +23,10 @@ export class DashboardService {
       this.budgetService.getAll()
     ]).pipe(
       map(([transactions, budgets]) => {
-        // Filter transactions by current company
         const companyTransactions = transactions.filter(t => t.companyId === currentCompanyId);
         
         const totalIncome = companyTransactions
-          .filter(t => t.type === 'income' || (t.type === 'invoice' && t.status === 'paid'))
+          .filter(t => (t.type === 'income' && t.status === 'paid') || (t.type === 'invoice' && t.status === 'paid'))
           .reduce((sum, t) => sum + t.amount, 0);
 
         const totalExpenses = companyTransactions
@@ -66,12 +65,10 @@ export class DashboardService {
   private getMonthlyExpenses(transactions: any[]): { month: string; amount: number }[] {
     const monthlyMap = new Map<string, number>();
     
-    // Include all expense types (pending, confirmed, paid)
     const expenseTransactions = transactions.filter(t => t.type === 'expense');
 
     expenseTransactions.forEach(t => {
-      // Parse date string directly without timezone conversion
-      const month = t.date.substring(0, 7); // YYYY-MM format
+      const month = t.date.substring(0, 7);
       monthlyMap.set(month, (monthlyMap.get(month) || 0) + t.amount);
     });
 
@@ -86,9 +83,9 @@ export class DashboardService {
     const monthlyMap = new Map<string, number>();
 
     transactions
-      .filter(t => t.type === 'income' || (t.type === 'invoice' && t.status === 'paid'))
+      .filter(t => (t.type === 'income' && t.status === 'paid') || (t.type === 'invoice' && t.status === 'paid'))
       .forEach(t => {
-        const month = t.date.substring(0, 7); // YYYY-MM format
+        const month = t.date.substring(0, 7);
         monthlyMap.set(month, (monthlyMap.get(month) || 0) + t.amount);
       });
 

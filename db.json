@@ -720,12 +720,13 @@
       "date": "2025-12-10",
       "walletId": "wallet_1",
       "currency": "EUR",
-      "status": "confirmed",
+      "status": "paid",
       "subcategory": "other",
       "tags": [],
       "companyId": "comp_2",
       "createdBy": "4",
-      "approvedBy": "4"
+      "approvedBy": "4",
+      "paidDate": "2025-12-10"
     }
   ],
   "budgets": [
