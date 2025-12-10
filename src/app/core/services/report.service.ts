@@ -7,10 +7,6 @@ import { Transaction, Budget } from '../models';
 export class ReportService {
 
   constructor() {}
-
-  /**
-   * Generate a CSV report for transactions
-   */
   generateTransactionCSV(transactions: Transaction[]): void {
     const csv = this.transactionsToCSV(transactions);
     this.downloadFile(csv, 'transactions-report.csv', 'text/csv');

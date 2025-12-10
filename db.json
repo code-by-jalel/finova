@@ -199,6 +199,18 @@
         "view_reports"
       ],
       "status": "pending"
+    },
+    {
+      "id": "user_jf2u2e8z1",
+      "email": "benromdhanejaleleddine@yahoo.fr",
+      "password": "123456",
+      "name": "jalel",
+      "role": "admin",
+      "companyId": "comp_2",
+      "permissions": [
+        "full_access"
+      ],
+      "status": "active"
     }
   ],
   "wallets": [
@@ -208,7 +220,7 @@
       "name": "Trésorerie Opérationnelle",
       "type": "operational",
       "currency": "TND",
-      "balance": 50000,
+      "balance": 98000,
       "initialBalance": 50000,
       "creditLimit": 10000,
       "status": "active",
@@ -538,7 +550,7 @@
     {
       "id": "tx_11",
       "companyId": "comp_2",
-      "walletId": "wallet_5",
+      "walletId": "wallet_4",
       "type": "expense",
       "status": "confirmed",
       "amount": 4200,
@@ -564,7 +576,7 @@
     {
       "id": "tx_12",
       "companyId": "comp_2",
-      "walletId": "wallet_6",
+      "walletId": "wallet_4",
       "type": "expense",
       "status": "confirmed",
       "amount": 5800,
@@ -618,11 +630,11 @@
       "companyId": "comp_2",
       "walletId": "wallet_4",
       "type": "expense",
-      "status": "pending",
+      "status": "confirmed",
       "amount": 8500,
       "currency": "TND",
-      "category": "Dépenses Opérationnelles",
-      "subcategory": "Assurance",
+      "category": "Assurances",
+      "subcategory": "Assurances Flotte",
       "description": "Prime assurance responsabilité civile",
       "invoiceNumber": "ASS-2025-12",
       "relatedEntity": "AXA Assurances",
@@ -638,6 +650,81 @@
       ],
       "notes": "En attente d'approbation treasurer",
       "attachmentUrl": null
+    },
+    {
+      "id": "tx_7fge9pnqy",
+      "type": "expense",
+      "category": "Transport",
+      "amount": 1000,
+      "description": "transport produits",
+      "date": "2025-12-10",
+      "walletId": "wallet_4",
+      "currency": "TND",
+      "status": "paid",
+      "subcategory": "other",
+      "tags": [],
+      "companyId": "comp_2",
+      "createdBy": "4",
+      "approvedBy": "4",
+      "paidDate": "2025-12-10"
+    },
+    {
+      "id": "tx_15",
+      "companyId": "comp_2",
+      "walletId": "wallet_4",
+      "type": "expense",
+      "status": "confirmed",
+      "amount": 62000,
+      "currency": "TND",
+      "category": "Ressources Humaines",
+      "subcategory": "Salaires",
+      "description": "Salaires équipe opérationnelle décembre 2025",
+      "invoiceNumber": "PAIE-12-2025",
+      "relatedEntity": "Équipe opérationnelle",
+      "relatedEntityType": "department",
+      "date": "2025-12-10",
+      "dueDate": "2025-12-31",
+      "paidDate": "2025-12-10",
+      "createdBy": "4",
+      "approvedBy": "4",
+      "tags": [
+        "payroll",
+        "monthly"
+      ],
+      "notes": "Paie mensuelle équipe",
+      "attachmentUrl": null
+    },
+    {
+      "id": "tx_e422dd726",
+      "type": "expense",
+      "category": "Transport",
+      "amount": 1000,
+      "description": "transport produits 2",
+      "date": "2025-12-10",
+      "walletId": "wallet_1",
+      "currency": "EUR",
+      "status": "paid",
+      "subcategory": "other",
+      "tags": [],
+      "companyId": "comp_2",
+      "createdBy": "4",
+      "approvedBy": "4",
+      "paidDate": "2025-12-10"
+    },
+    {
+      "id": "tx_lyfrerzl2",
+      "type": "income",
+      "category": "Transport",
+      "amount": 50000,
+      "description": "vendre produits",
+      "date": "2025-12-10",
+      "walletId": "wallet_1",
+      "currency": "EUR",
+      "status": "pending",
+      "subcategory": "other",
+      "tags": [],
+      "companyId": "comp_2",
+      "createdBy": "4"
     }
   ],
   "budgets": [
@@ -719,7 +806,7 @@
       "category": "Dépenses Opérationnelles",
       "subcategory": "Maintenance",
       "month": "2025-12",
-      "limit": 5000,
+      "limit": 10000,
       "spent": 1800,
       "forecast": 2500,
       "status": "healthy",
@@ -728,7 +815,7 @@
     {
       "id": "budg_7",
       "companyId": "comp_2",
-      "walletId": "wallet_5",
+      "walletId": "wallet_4",
       "department": "Finance",
       "category": "Assurances",
       "subcategory": "Assurances Flotte",
@@ -742,7 +829,7 @@
     {
       "id": "budg_8",
       "companyId": "comp_2",
-      "walletId": "wallet_6",
+      "walletId": "wallet_4",
       "department": "Operations",
       "category": "Ressources Humaines",
       "subcategory": "Salaires",
@@ -752,6 +839,20 @@
       "forecast": 62000,
       "status": "healthy",
       "notes": "Salaires équipe opérationnelle"
+    },
+    {
+      "id": "bgt_r1cb7tyyb",
+      "companyId": "comp_2",
+      "walletId": "wallet_4",
+      "department": "General",
+      "category": "Transport",
+      "subcategory": "other",
+      "month": "2025-12",
+      "limit": 5000,
+      "spent": 0,
+      "forecast": 2000,
+      "status": "healthy",
+      "notes": ""
     }
   ],
   "suppliers": [

@@ -20,9 +20,18 @@ export class AuthService {
   private userKey = 'finova_user';
   private companyKey = 'finova_company';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    // Restaurer le user depuis localStorage au démarrage
+    const storedUser = this.getUserFromStorage();
+    const storedCompany = this.getCompanyFromStorage();
+    if (storedUser) {
+      this.currentUserSubject.next(storedUser);
+    }
+    if (storedCompany) {
+      this.currentCompanySubject.next(storedCompany);
+    }
+  }
 
-  // Login: Authentification multi-entreprise
   login(email: string, password: string): Observable<AuthResponse> {
     return this.http.get<User[]>(`${this.apiUrl}/users?email=${email}`)
       .pipe(
@@ -32,7 +41,15 @@ export class AuthService {
             throw new Error('Email ou mot de passe incorrect');
           }
           
-          // Récupérer les données de l'entreprise
+          // Vérifier le statut de l'utilisateur
+          if (user.status === 'pending') {
+            throw new Error('Votre compte est en attente d\'approbation par un administrateur');
+          }
+          
+          if (user.status !== 'active') {
+            throw new Error('Votre compte est désactivé');
+          }
+          
           return this.http.get<Company>(`${this.apiUrl}/companies/${user.companyId}`).pipe(
             map(company => ({ user, company }))
           );
@@ -111,30 +128,25 @@ export class AuthService {
     return this.currentCompanySubject.value;
   }
 
-  // Vérifier les permissions
   hasPermission(permission: string): boolean {
     const user = this.getCurrentUser();
     return user ? user.permissions.includes(permission) : false;
   }
 
-  // Vérifier si utilisateur est trésorier
   isTreasurer(): boolean {
     const user = this.getCurrentUser();
     return user ? user.role === 'treasurer' : false;
   }
 
-  // Vérifier si utilisateur est admin de l'entreprise
   isCompanyAdmin(): boolean {
     const user = this.getCurrentUser();
     return user ? user.role === 'admin' : false;
   }
 
-  // Vérifier si utilisateur peut approuver les transactions
   canApprove(): boolean {
     return this.hasPermission('approve_high');
   }
 
-  // Signup: Créer nouvel utilisateur (pour invite)
   signup(email: string, password: string, name: string, companyId: string, role: string): Observable<AuthResponse> {
     return this.http.get<User[]>(`${this.apiUrl}/users?email=${email}`)
       .pipe(
@@ -151,19 +163,17 @@ export class AuthService {
             role: role as any,
             companyId,
             permissions: this.getDefaultPermissions(role),
-            status: 'active'
+            status: 'pending'  // ← CHANGÉ: pending au lieu de active
           };
           
           return this.http.post<User>(`${this.apiUrl}/users`, newUser);
         }),
         tap(user => {
-          const token = 'token_' + user.id + '_' + Date.now();
-          this.setToken(token);
-          this.setUser(user);
-          this.currentUserSubject.next(user);
+          // Ne pas connecter automatiquement - l'utilisateur doit attendre l'approbation
+          // Simplement retourner l'utilisateur créé
         }),
         map(user => ({
-          token: localStorage.getItem(this.tokenKey) || '',
+          token: '',  // ← Pas de token jusqu'à l'approbation
           user
         })),
         catchError(error => {

@@ -13,7 +13,6 @@ export class DashboardService {
     private budgetService: BudgetService
   ) {}
 
-  // Récupère les données du dashboard (combine transactions et budgets)
   getDashboardData(): Observable<DashboardData> {
     return combineLatest([
       this.transactionService.getAll(),
@@ -127,7 +126,6 @@ export class DashboardService {
     const now = new Date().toISOString();
     const currentMonth = new Date().toISOString().substring(0, 7);
 
-    // Check for exceeded budgets
     budgets.forEach(budget => {
       if (budget.month === currentMonth && budget.spent > budget.limit) {
         alerts.push({
@@ -154,7 +152,6 @@ export class DashboardService {
       }
     });
 
-    // Check for unusual expenses
     const avgExpense = transactions
       .filter(t => t.type === 'expense')
       .reduce((sum, t) => sum + t.amount, 0) / Math.max(transactions.length, 1);
